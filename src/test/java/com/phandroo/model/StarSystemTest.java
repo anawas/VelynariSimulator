@@ -10,5 +10,7 @@ class StarSystemTest {
       StarSystem starSystem = new StarSystem(1, 1);
       assertNotNull(starSystem);
       assert starSystem.x == 1;
+      assert starSystem.inhabitable == false;
+      assert starSystem.colonized == false;
    }
 }
