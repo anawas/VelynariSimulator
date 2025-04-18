@@ -11,7 +11,7 @@ public class GalaxyGenerator {
       Random random = new Random();
 
       for (int i = 0; i < numStars; i++) {
-         double radius = Math.pow(random.nextDouble(), 0.5) * maxRadius;  // Dichtezentrum
+         double radius = Math.pow(random.nextDouble(), 2.0) * maxRadius;  // Dichtezentrum
          double angle = radius * 0.3 + (6.27 * random.nextInt(numArms) / numArms);
          double armOffset = (random.nextDouble() - 0.5) * (Math.PI / numArms);  // Verrauschung
 
