@@ -6,6 +6,7 @@ import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
@@ -25,8 +26,8 @@ public class Main extends Application {
    @Override
    public void start(Stage primaryStage) throws Exception {
       List<StarSystem> stars = GalaxyGenerator.generateGalaxy(
-          100_000,
-          5,
+          10_000,
+          2,
           50_000
       );
 
@@ -46,6 +47,11 @@ public class Main extends Application {
 
       StackPane root = new StackPane(canvas);
       Scene scene = new Scene(root, WIDTH, HEIGHT, Color.BLACK);
+      scene.setOnKeyPressed(event -> {
+         if (event.getCode() == KeyCode.ESCAPE) {
+            primaryStage.close();
+         }
+      });
 
       primaryStage.setScene(scene);
       primaryStage.setTitle("Velynari Galaxie");
