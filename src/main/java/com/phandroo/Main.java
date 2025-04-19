@@ -28,13 +28,15 @@ public class Main extends Application {
    private long simulationTime = 0;
    private final long timePerStep = 500;
 
+   List<StarSystem> stars = null;
+
    public static void main(String[] args) {
       launch(args);
    }
 
    @Override
    public void start(Stage primaryStage) throws Exception {
-      List<StarSystem> stars = GalaxyGenerator.generateGalaxy(
+    stars = GalaxyGenerator.generateGalaxy(
           10_000,
           2,
           50_000
@@ -51,6 +53,7 @@ public class Main extends Application {
       GraphicsContext gc = canvas.getGraphicsContext2D();
 
       redrawCanvas(gc, stars, motherships);
+
       StackPane root = new StackPane(canvas);
       Scene scene = new Scene(root, WIDTH, HEIGHT, Color.BLACK);
       scene.setOnKeyPressed(event -> {
@@ -79,23 +82,30 @@ public class Main extends Application {
       gc.setFill(Color.BLACK);
       gc.fillRect(0, 0, WIDTH, HEIGHT);
 
-      gc.setFill(Color.WHITE);
-      for (StarSystem star : stars) {
-         double screenX = WIDTH / 2 + star.x * SCALE;
-         double screenY = HEIGHT / 2 + star.y * SCALE;
-         gc.fillRect(screenX, screenY, 1, 1);
-      }
+      stars.forEach(star -> {star.draw(gc, SCALE);});
 
       motherships.stream().filter(mothership -> mothership.target != null)
           .forEach(mothership -> {mothership.draw(gc, SCALE);});
 
+      motherships.stream().filter(mothership -> mothership.target == null)
+          .forEach(mothership -> {mothership.target = stars.get(new Random().nextInt(stars.size()));});
+
       gc.setFill(Color.LIGHTGREY);
-      gc.fillText("Zeit: " + formatYears(simulationTime), WIDTH - 180, HEIGHT - 20);
+      gc.fillText("Zeit: "
+          + formatYears(simulationTime)
+          + "  /  Kolonien: "
+          + Long.toString(countColonializedSystems())
+          , WIDTH - 220, HEIGHT - 20);
+   }
+
+   private long countColonializedSystems() {
+      return stars.stream().filter(s -> s.colonized).count();
    }
 
    private String formatYears(long years) {
       if (years >= 1_000_000) {
-         return years / 1_000_000 + " Mio. Jahre";
+         double mio = years / 1_000_000.0;
+         return String.format("%.3f Mio. Jahre", mio);
       } else if (years >= 1_000) {
          return years / 1_000 + " Tsd. Jahre";
       } else {

@@ -1,11 +1,12 @@
 package com.phandroo.model;
 
+import com.phandroo.Drawable;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 
 import java.awt.*;
 
-public class Mothership {
+public class Mothership implements Drawable {
    public double x, y;
    public StarSystem target;
 
@@ -23,8 +24,9 @@ public class Mothership {
       double distance = Math.sqrt(dx * dx + dy * dy);
 
       if (distance < stepSize) {
-         x = target.y;
-         y = target.x;
+         x = target.x;
+         y = target.y;
+         target.colonized = true;
          target = null;  // Zielsytem erreicht
       } else {
          x += (dx / distance) * stepSize;
@@ -47,6 +49,5 @@ public class Mothership {
       screenX = width / 2 + x * scale;
       screenY = height / 2 + y * scale;
       gc.fillOval(screenX - 3, screenY - 3, 6, 6);
-
    }
 }
