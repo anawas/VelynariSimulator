@@ -3,6 +3,8 @@ package com.phandroo;
 import com.phandroo.model.GalaxyGenerator;
 import com.phandroo.model.Mothership;
 import com.phandroo.model.StarSystem;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
@@ -11,6 +13,7 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,11 +41,12 @@ public class Main extends Application {
       );
 
       List<Mothership> motherships = new ArrayList<>();
-      Mothership ship = new Mothership(1, 1);  // Start 1 Lj von Zentrum
-      StarSystem targetSystem = stars.get(new Random().nextInt(stars.size()));
-      ship.target = targetSystem;
-      motherships.add(ship);
-
+      for (int i = 0; i < 3; i++) {
+         Mothership ship = new Mothership(1, 1);  // Start 1 Lj von Zentrum
+         StarSystem targetSystem = stars.get(new Random().nextInt(stars.size()));
+         ship.target = targetSystem;
+         motherships.add(ship);
+      }
       Canvas canvas = new Canvas(WIDTH, HEIGHT);
       GraphicsContext gc = canvas.getGraphicsContext2D();
 
@@ -52,16 +56,20 @@ public class Main extends Application {
       scene.setOnKeyPressed(event -> {
          switch (event.getCode()) {
             case Q -> primaryStage.close();
-            case N -> {
-               simulationTime += timePerStep;
-               for (Mothership s : motherships) {
-                  s.moveTowardsTarget(100);  // 100 Lj pro Schritt
-               }
-               redrawCanvas(gc, stars, motherships);
-            }
          }
       });
 
+      Timeline timeline = new Timeline(
+          new KeyFrame(Duration.millis(50), e -> {
+             simulationTime += timePerStep;
+             for (Mothership s : motherships) {
+                s.moveTowardsTarget(100);  // 100 Lj pro Schritt
+             }
+             redrawCanvas(gc, stars, motherships);
+          })
+      );
+      timeline.setCycleCount(Timeline.INDEFINITE);
+      timeline.play();
       primaryStage.setScene(scene);
       primaryStage.setTitle("Velynari Galaxie");
       primaryStage.show();
@@ -78,19 +86,8 @@ public class Main extends Application {
          gc.fillRect(screenX, screenY, 1, 1);
       }
 
-      gc.setFill(Color.GREEN);
-      for (Mothership ship : motherships) {
-         double screenX = WIDTH / 2 + ship.target.x * SCALE;
-         double screenY = HEIGHT / 2 + ship.target.y * SCALE;
-         gc.fillOval(screenX - 3, screenY - 3, 6, 6);
-      }
-
-      gc.setFill(Color.RED);
-      for (Mothership ship : motherships) {
-         double screenX = WIDTH / 2 + ship.x * SCALE;
-         double screenY = HEIGHT / 2 + ship.y * SCALE;
-         gc.fillOval(screenX - 3, screenY - 3, 6, 6);
-      }
+      motherships.stream().filter(mothership -> mothership.target != null)
+          .forEach(mothership -> {mothership.draw(gc, SCALE);});
 
       gc.setFill(Color.LIGHTGREY);
       gc.fillText("Zeit: " + formatYears(simulationTime), WIDTH - 180, HEIGHT - 20);
