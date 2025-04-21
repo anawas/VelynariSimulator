@@ -5,12 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="5066a221-63bd-4568-ac92-e01e69e85692" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/phandroo/model/Colony.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/phandroo/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/phandroo/Main.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/phandroo/model/Mothership.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/phandroo/model/Mothership.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/phandroo/model/StarSystem.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/phandroo/model/StarSystem.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/build.gradle" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -138,7 +134,9 @@
       <option name="presentableId" value="Default" />
       <updated>1745223129231</updated>
       <workItem from="1745223130296" duration="7339000" />
-      <workItem from="1745242341569" duration="25000" />
+      <workItem from="1745242341569" duration="89000" />
+      <workItem from="1745250758813" duration="40000" />
+      <workItem from="1745254124734" duration="13000" />
     </task>
     <servers />
   </component>
