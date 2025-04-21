@@ -6,18 +6,25 @@ import com.phandroo.model.StarSystem;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Application;
+import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.input.KeyCode;
+import javafx.scene.image.WritableImage;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
+import javax.imageio.ImageIO;
+import java.awt.*;
+import java.io.File;
+import java.io.IOException;
 import java.text.NumberFormat;
 import java.util.*;
-import java.util.function.Predicate;
+import java.util.List;
 
 public class Main extends Application {
 
@@ -45,7 +52,7 @@ public class Main extends Application {
       List<Mothership> motherships = new ArrayList<>();
       for (int i = 0; i < 3; i++) {
          Mothership ship = new Mothership(1, 1);  // Start 1 Lj von Zentrum
-         StarSystem targetSystem = stars.get(new Random().nextInt(stars.size()));
+         StarSystem targetSystem = findClosestStarSystem(ship);
          ship.target = targetSystem;
          motherships.add(ship);
       }
@@ -59,11 +66,12 @@ public class Main extends Application {
       scene.setOnKeyPressed(event -> {
          switch (event.getCode()) {
             case Q -> primaryStage.close();
+            case S -> saveCanvasAsPng(canvas);
          }
       });
 
       Timeline timeline = new Timeline(
-          new KeyFrame(Duration.millis(10), e -> {
+          new KeyFrame(Duration.millis(100), e -> {
              simulationTime += timePerStep;
              for (Mothership s : motherships) {
                 s.moveTowardsTarget(100);  // 100 Lj pro Schritt
@@ -78,6 +86,18 @@ public class Main extends Application {
       primaryStage.show();
    }
 
+   private void saveCanvasAsPng(Canvas canvas) {
+      WritableImage image = new WritableImage((int) canvas.getWidth(), (int) canvas.getHeight());
+      canvas.snapshot(null, image);
+
+      File file = new File("target.png");
+      try {
+         ImageIO.write(SwingFXUtils.fromFXImage(image, null), "png", file);
+      } catch (IOException e) {
+         throw new RuntimeException(e);
+      }
+   }
+
    private StarSystem findClosestStarSystem(Mothership mothership) {
       List<StarSystem> closestStarSystems = stars.stream()
           .sorted(Comparator.comparingDouble(s -> mothership.distanceToStarSystem(s)))
@@ -85,11 +105,16 @@ public class Main extends Application {
           .filter(s -> s.visited == false)
           .limit(5)
           .toList();
-      return closestStarSystems.get(new Random().nextInt(closestStarSystems.size()));
+
+      // Need to make sure that the system is visited by only one ship. We set ths status
+      // to be visited.
+      StarSystem system = closestStarSystems.get(new Random().nextInt(closestStarSystems.size()));
+      system.visited = true;
+      return system;
    }
    private void redrawCanvas(GraphicsContext gc, List<StarSystem> stars, List<Mothership> motherships) {
       gc.setFill(Color.BLACK);
-      gc.fillRect(0, 0, WIDTH, HEIGHT);
+      //gc.fillRect(0, 0, WIDTH, HEIGHT);
 
       stars.forEach(star -> {star.draw(gc, SCALE);});
 
@@ -99,12 +124,17 @@ public class Main extends Application {
       motherships.stream().filter(mothership -> mothership.target == null)
           .forEach(mothership -> {mothership.target = findClosestStarSystem(mothership);});
 
-      gc.setFill(Color.LIGHTGREY);
-      gc.fillText("Zeit: "
+      String infoMessage = "Zeit: "
           + formatYears(simulationTime)
           + "  /  Kolonien: "
-          + countColonializedSystems()
-          , WIDTH - 220, HEIGHT - 20);
+          + countColonializedSystems();
+
+      Text text = new Text(infoMessage + "  ");  // Add additional spaces
+      double width = text.getLayoutBounds().getWidth();
+      gc.setFill(Color.BLACK);
+      gc.fillRect(WIDTH-220, HEIGHT-35, width, 20);
+      gc.setFill(Color.LIGHTGREY);
+      gc.fillText(infoMessage, WIDTH-220, HEIGHT-20);
    }
 
    private long countColonializedSystems() {

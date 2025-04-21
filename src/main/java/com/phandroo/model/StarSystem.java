@@ -10,6 +10,7 @@ public class StarSystem {
    public boolean colonized;
    public boolean inhabitable;
    public boolean visited;
+   public Colony colony;
 
    public StarSystem(double x, double y) {
       this.x = x;
@@ -17,6 +18,7 @@ public class StarSystem {
       this.colonized = false;
       this.inhabitable = setIsInhabitable(0.1);
       this.visited = false;
+      this.colony = new Colony();
    }
 
    private boolean setIsInhabitable(double probability) {
@@ -38,12 +40,20 @@ public class StarSystem {
          gc.setFill(Color.YELLOW);
          gc.fillOval(screenX, screenY, 1, 1);
       }
+
+      gc.setFill(starColor);
+      gc.fillOval(screenX, screenY, 1, 1);
+
       if (colonized) {
-         gc.setFill(Color.rgb(100, 100, 255));
-         gc.fillOval(screenX - 3, screenY - 3, 6, 6);
-      } else {
-         gc.setFill(starColor);
-         gc.fillOval(screenX, screenY, 1, 1);
+         // A colony may be extinct with 0.1 % probability
+         // In the end, every colony dies.
+         if (new Random().nextFloat() < 0.001) {
+            colony = null;
+            colonized = false;
+         } else {
+            gc.setFill(Color.rgb(100, 100, 255));
+            gc.fillOval(screenX - 3, screenY - 3, 6, 6);
+         }
       }
    }
 }
