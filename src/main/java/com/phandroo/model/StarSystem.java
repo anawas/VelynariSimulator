@@ -3,19 +3,20 @@ package com.phandroo.model;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 
-import java.awt.*;
 import java.util.Random;
 
 public class StarSystem {
    public double x, y;   // Position in Lj
    public boolean colonized;
    public boolean inhabitable;
+   public boolean visited;
 
    public StarSystem(double x, double y) {
       this.x = x;
       this.y = y;
       this.colonized = false;
-      this.inhabitable = setIsInhabitable(0.01);
+      this.inhabitable = setIsInhabitable(0.1);
+      this.visited = false;
    }
 
    private boolean setIsInhabitable(double probability) {
@@ -36,7 +37,8 @@ public class StarSystem {
       if (inhabitable) {
          gc.setFill(Color.YELLOW);
          gc.fillOval(screenX, screenY, 1, 1);
-      } else if (colonized) {
+      }
+      if (colonized) {
          gc.setFill(Color.rgb(100, 100, 255));
          gc.fillOval(screenX - 3, screenY - 3, 6, 6);
       } else {

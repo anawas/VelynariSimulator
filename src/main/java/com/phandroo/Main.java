@@ -15,9 +15,9 @@ import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
+import java.text.NumberFormat;
+import java.util.*;
+import java.util.function.Predicate;
 
 public class Main extends Application {
 
@@ -63,7 +63,7 @@ public class Main extends Application {
       });
 
       Timeline timeline = new Timeline(
-          new KeyFrame(Duration.millis(50), e -> {
+          new KeyFrame(Duration.millis(10), e -> {
              simulationTime += timePerStep;
              for (Mothership s : motherships) {
                 s.moveTowardsTarget(100);  // 100 Lj pro Schritt
@@ -78,6 +78,15 @@ public class Main extends Application {
       primaryStage.show();
    }
 
+   private StarSystem findClosestStarSystem(Mothership mothership) {
+      List<StarSystem> closestStarSystems = stars.stream()
+          .sorted(Comparator.comparingDouble(s -> mothership.distanceToStarSystem(s)))
+          .filter(s -> s.colonized==false)
+          .filter(s -> s.visited == false)
+          .limit(5)
+          .toList();
+      return closestStarSystems.get(new Random().nextInt(closestStarSystems.size()));
+   }
    private void redrawCanvas(GraphicsContext gc, List<StarSystem> stars, List<Mothership> motherships) {
       gc.setFill(Color.BLACK);
       gc.fillRect(0, 0, WIDTH, HEIGHT);
@@ -88,13 +97,13 @@ public class Main extends Application {
           .forEach(mothership -> {mothership.draw(gc, SCALE);});
 
       motherships.stream().filter(mothership -> mothership.target == null)
-          .forEach(mothership -> {mothership.target = stars.get(new Random().nextInt(stars.size()));});
+          .forEach(mothership -> {mothership.target = findClosestStarSystem(mothership);});
 
       gc.setFill(Color.LIGHTGREY);
       gc.fillText("Zeit: "
           + formatYears(simulationTime)
           + "  /  Kolonien: "
-          + Long.toString(countColonializedSystems())
+          + countColonializedSystems()
           , WIDTH - 220, HEIGHT - 20);
    }
 
@@ -105,7 +114,10 @@ public class Main extends Application {
    private String formatYears(long years) {
       if (years >= 1_000_000) {
          double mio = years / 1_000_000.0;
-         return String.format("%.3f Mio. Jahre", mio);
+         NumberFormat nf = NumberFormat.getNumberInstance(Locale.GERMANY);
+         nf.setMinimumFractionDigits(3);
+         nf.setMaximumFractionDigits(3);
+         return nf.format(mio) + " Mio. Jahre";
       } else if (years >= 1_000) {
          return years / 1_000 + " Tsd. Jahre";
       } else {
