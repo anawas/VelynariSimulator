@@ -4,9 +4,15 @@ Simuliert die Ausbreitung der fiktiven Spezies Velynari in einer Galaxie.
 ## Galaktisches Archiv der Vereinigten Systeme
 ### Eintrag #7.044.982: Velynari (Qo'Lenari)
 Bezeichner: Velynari (exonym) / Qo'Lenari (endonym)
-Klassifikation: Intelligente, nomadisch-urbane Spezies | Status: fortgeschritten | Herkunft unbekannt
+
+Klassifikation: Intelligente, nomadisch-urbane Spezies
+
+Status: fortgeschritten 
+
+Herkunft unbekannt
 
 „Sie kamen lautlos, wie ein Wandersturm aus Sternenstaub. Und wo sie verweilten, wuchs neues Leben.“
+
 — Aus den Fragmenten der Lysari-Schriften (Übersetzung umstritten)
 
 ### Allgemein
